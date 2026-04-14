@@ -727,7 +727,7 @@ const IMGS = {
 <!-- ════════════════════════════════════════
      PAGE: LANDING
 ════════════════════════════════════════ -->
-<div id="page-landing" class="page active">
+<div id="page-landing" class="page active" data-login-root="landing-page">
 
   <!-- NAV -->
   <nav class="topnav">
@@ -1031,7 +1031,7 @@ const IMGS = {
 <!-- ════════════════════════════════════════
      PAGE: CLIENT DASHBOARD
 ════════════════════════════════════════ -->
-<div id="page-client-dash" class="page">
+<div id="page-client-dash" class="page" data-login-root="client-dashboard">
   <div class="dash-layout">
 
     <!-- Sidebar -->
@@ -1086,7 +1086,7 @@ const IMGS = {
         <!-- Project card -->
         <div class="dash-card" style="margin-bottom:20px;cursor:pointer" onclick="showClientPage('project',null)">
           <div class="dash-card-header">
-            <div class="dash-card-title">Taylor John Images — Web Launch</div>
+            <div class="dash-card-title" id="project-name">Taylor John Images — Web Launch</div>
             <span class="badge badge-inprogress">In Progress</span>
           </div>
           <div style="padding:20px">
@@ -1112,8 +1112,8 @@ const IMGS = {
               </div>
             </div>
             <div style="margin-top:16px">
-              <div style="display:flex;justify-content:space-between;font-size:12px;color:#9ca3af;margin-bottom:6px"><span>Overall progress</span><span>65%</span></div>
-              <div class="prog-track" style="height:5px"><div class="prog-fill" style="width:65%"></div></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:#9ca3af;margin-bottom:6px"><span>Overall progress</span><span id="progress-text">65% complete</span></div>
+              <div class="prog-track" style="height:5px"><div class="prog-fill" id="progress-bar" style="width:65%"></div></div>
             </div>
           </div>
         </div>
@@ -1173,7 +1173,7 @@ const IMGS = {
               <div class="msg-item"><div class="msg-head"><strong>Tk</strong> · 2h ago</div><div class="msg-body">Homepage layout updated. Mobile nav hamburger live — please review.</div></div>
               <div class="msg-item"><div class="msg-head"><strong>You</strong> · 5h ago</div><div class="msg-body">Can we try a lighter background on the work page?</div></div>
               <div class="msg-item"><div class="msg-head"><strong>Tk</strong> · 1d ago</div><div class="msg-body">Initial concepts ready for review. Files in deliverables above.</div></div>
-              <div class="msg-input-wrap"><input class="msg-input" placeholder="Send a message..."/><button class="msg-send">Send</button></div>
+              <div class="msg-input-wrap"><input class="msg-input" id="message-input" placeholder="Send a message..."/><button class="msg-send" id="message-send-btn" onclick="sendMessage()">Send</button></div>
             </div>
             <div class="dash-card">
               <div class="dash-card-header"><div class="dash-card-title">Timeline</div></div>
@@ -1447,6 +1447,178 @@ function showDesignerPage(id, link) {
   window.scrollTo(0,0);
 }
 
+// YOUR NEW MASTER API URL
+const API_URL = 'https://script.google.com/macros/s/AKfycbwwuqrIlOwo3ahMPgxHcjqsezOr8ZpTRYF1xGhkZhN-z8vfys-ITQQc_nEQovbIfMV_/exec';
+
+function getEl(...ids) {
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el) return el;
+  }
+  return null;
+}
+
+function showClientDashboardView() {
+  const landing = getEl('landing-page', 'page-landing');
+  const clientDash = getEl('client-dashboard', 'page-client-dash');
+
+  if (landing) landing.style.display = 'none';
+  if (clientDash) {
+    clientDash.style.display = 'block';
+    clientDash.classList.add('active');
+  }
+
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const actualDashPage = document.getElementById('page-client-dash');
+  if (actualDashPage) actualDashPage.classList.add('active');
+}
+
+function renderDashboardData(data) {
+  const project = data.project || data;
+  const projectName = project.name || project.project_name || 'Untitled Project';
+  const rawProgress = Number(project.progress ?? 0);
+  const progress = Number.isFinite(rawProgress) ? Math.max(0, Math.min(100, rawProgress)) : 0;
+
+  const projectNameDisplay = getEl('project-name-display', 'project-name');
+  const progressBar = getEl('progress-bar');
+  const progressText = getEl('progress-text');
+  const projectDetailHeading = document.querySelector('#client-project .proj-h1');
+
+  if (projectNameDisplay) projectNameDisplay.innerText = projectName;
+  if (projectDetailHeading) projectDetailHeading.innerText = projectName;
+  if (progressBar) progressBar.style.width = progress + '%';
+  if (progressText) progressText.innerText = `${progress}% complete`;
+
+  if (project.id) {
+    window.PROJECT_ID = project.id;
+    localStorage.setItem('projectId', project.id);
+  }
+
+  if (project.name) {
+    localStorage.setItem('projectName', project.name);
+  }
+}
+
+async function loadDashboard(clientEmail) {
+  if (!clientEmail) return;
+
+  try {
+    const response = await fetch(`${API_URL}?action=getProject&email=${encodeURIComponent(clientEmail)}`);
+    if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('Dashboard error:', data.error);
+      return;
+    }
+
+    renderDashboardData(data);
+  } catch (error) {
+    console.error('Dashboard failed to load', error);
+  }
+}
+
+async function handleLogin() {
+  const emailField = getEl('email-field');
+  const emailInput = emailField ? emailField.value.trim() : '';
+
+  if (!emailInput) {
+    alert('Enter your email first.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}?action=getDashboard&email=${encodeURIComponent(emailInput)}`);
+    if (!response.ok) throw new Error(`Request failed with status ${response.status}`);
+
+    let data = await response.json();
+
+    if (data.error && data.error.toLowerCase().includes('invalid action')) {
+      const fallbackResponse = await fetch(`${API_URL}?action=getProject&email=${encodeURIComponent(emailInput)}`);
+      if (!fallbackResponse.ok) throw new Error(`Fallback request failed with status ${fallbackResponse.status}`);
+      const fallbackData = await fallbackResponse.json();
+      if (fallbackData.error) {
+        alert("We couldn't find that email. Try test@gmail.com!");
+        return;
+      }
+      data = { project: fallbackData };
+    } else if (data.error) {
+      alert("We couldn't find that email. Try test@gmail.com!");
+      return;
+    }
+
+    localStorage.setItem('clientEmail', emailInput);
+    window.CLIENT_EMAIL = emailInput;
+    renderDashboardData(data);
+    showClientDashboardView();
+  } catch (error) {
+    console.error('Login failed', error);
+    alert('Login failed. Check your Apps Script deployment and sheet data.');
+  }
+}
+
+async function sendMessage() {
+  const messageInput = document.getElementById('message-input');
+  if (!messageInput) return;
+
+  const messageText = messageInput.value.trim();
+  if (!messageText) return;
+
+  const payload = {
+    action: 'sendMessage',
+    sender: window.CLIENT_NAME || localStorage.getItem('clientName') || 'Client Name',
+    text: messageText,
+    projectId: window.PROJECT_ID || localStorage.getItem('projectId') || '123'
+  };
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(payload)
+    });
+
+    messageInput.value = '';
+  } catch (error) {
+    console.error('Message failed to send', error);
+  }
+}
+
+window.loadDashboard = loadDashboard;
+window.handleLogin = handleLogin;
+window.sendMessage = sendMessage;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sendBtn = document.getElementById('message-send-btn');
+  if (sendBtn && !sendBtn.dataset.bound) {
+    sendBtn.dataset.bound = 'true';
+    sendBtn.addEventListener('click', sendMessage);
+  }
+
+  const loginBtn = getEl('login-btn', 'email-login-btn');
+  if (loginBtn && !loginBtn.dataset.bound) {
+    loginBtn.dataset.bound = 'true';
+    loginBtn.addEventListener('click', handleLogin);
+  }
+
+  const emailField = getEl('email-field');
+  if (emailField && !emailField.dataset.bound) {
+    emailField.dataset.bound = 'true';
+    emailField.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleLogin();
+      }
+    });
+  }
+
+  const savedClientEmail = window.CLIENT_EMAIL || localStorage.getItem('clientEmail');
+  if (savedClientEmail) {
+    window.CLIENT_EMAIL = savedClientEmail;
+    loadDashboard(savedClientEmail);
+  }
+});
+
 // ── CARD 3D MOUSE PARALLAX ──
 const heroStack = document.getElementById('heroCardStack');
 if (heroStack) {
@@ -1465,13 +1637,5 @@ if (heroStack) {
   });
 }
 </script>
-    <!-- your page content -->
-
-  <script src="/js/api.js"></script>
-  <script src="/js/state.js"></script>
-  <script src="/js/utils.js"></script>
-  <script src="/js/dashboard-client.js"></script>
-  <script src="/js/dashboard-designer.js"></script>
-  <script src="/js/bootstrap.js"></script>
 </body>
 </html>

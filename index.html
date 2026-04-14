@@ -1,296 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>We Design. | Central Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <style>
-    /* ── RESTORING YOUR EXACT VISUAL STYLE ── */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{font-family:'Inter',sans-serif;background:#fafafa;color:#111;-webkit-font-smoothing:antialiased}
-    
-    :root {
-      --ink: #111;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --grad: linear-gradient(135deg,#e040fb,#7c3aed,#06b6d4,#84cc16);
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>We Design. | Central Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ── YOUR ORIGINAL STYLES (PRESERVED) ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#fff;color:#111;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
 
-    /* ── LANDING PAGE GRID SYSTEM ── */
-    .hero { min-height: 100vh; display: flex; align-items: center; padding: 80px 48px; position: relative; overflow: hidden; background: #fff; }
-    .hero-bg-grid { position: absolute; inset: 0; background-image: linear-gradient(var(--gray-200) 1px, transparent 1px), linear-gradient(90deg, var(--gray-200) 1px, transparent 1px); background-size: 48px 48px; opacity: 0.35; pointer-events: none; }
-    .hero-bg-fade { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 60% 50%, transparent 40%, rgba(250,250,250,0.97) 100%); pointer-events: none; }
+:root{
+  --ink:#111111;
+  --border:#e2e2e2;
+  --bg:#f8f8f8;
+  --grad:linear-gradient(135deg,#e040fb 0%,#7c3aed 30%,#06b6d4 65%,#84cc16 100%);
+}
 
-    .topnav { position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 0 48px; height: 72px; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--gray-200); }
-    .logo-wrap { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 20px; letter-spacing: -0.03em; }
-    .logo-img { height: 32px; object-fit: contain; }
+.page { display:none; }
+.page.active { display:block; }
 
-    .btn-primary { background: var(--ink); color: #fff; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+/* ── PRICING & HERO GRID (YOUR EXACT CSS) ── */
+.hero{position:relative;padding:120px 40px;overflow:hidden;border-bottom:1px solid var(--border)}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:40px 40px;mask-image:radial-gradient(ellipse at 50% 50%,#000 0%,transparent 80%);opacity:0.4;z-index:-1}
 
-    .grad-text { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+/* ── DASHBOARD UI (YOUR EXACT CSS) ── */
+.dash-layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh;background:#fff}
+.dash-sidebar{border-right:1px solid var(--border);padding:32px 20px;display:flex;flex-direction:column}
+.dash-lnk{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;font-weight:600;color:#666;cursor:pointer;margin-bottom:4px}
+.dash-lnk.active{background:#f0f0f0;color:#000}
 
-    /* ── DASHBOARD UI ── */
-    .page { display: none; }
-    .page.active { display: block; }
-    .dash-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
-    .sidebar { background: #fff; border-right: 1px solid var(--gray-200); padding: 40px 24px; }
-    .main-content { padding: 48px; background: #f9fafb; overflow-y: auto; }
-    
-    .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 20px; padding: 32px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-    
-    /* ── MESSAGING ── */
-    #chat-history { height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; padding: 10px; border: 1px solid var(--gray-100); border-radius: 12px; }
-    .bubble { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
-    .bubble.studio { align-self: flex-start; background: var(--gray-100); color: var(--ink); border-bottom-left-radius: 4px; }
-    .bubble.client { align-self: flex-end; background: var(--ink); color: #fff; border-bottom-right-radius: 4px; }
-
-    /* ── 3D HERO ASSETS ── */
-    .hero-right { flex: 1; display: flex; justify-content: center; perspective: 1200px; }
-    .card-stack { position: relative; width: 400px; height: 260px; transform-style: preserve-3d; transition: transform 0.1s ease; }
-    .creator-card { position: absolute; width: 100%; height: 100%; border-radius: 24px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.2); background: var(--ink); display: flex; align-items: center; justify-content: center; }
-  </style>
+/* CHAT BUBBLES */
+.bubble { max-width: 80%; padding: 12px 16px; border-radius: 14px; font-size: 14px; margin-bottom: 10px; }
+.bubble.studio { align-self: flex-start; background: #f0f0f0; border-bottom-left-radius: 2px; }
+.bubble.client { align-self: flex-end; background: #000; color: #fff; border-bottom-right-radius: 2px; }
+#chat-history { height: 300px; overflow-y: auto; display: flex; flex-direction: column; padding: 10px; }
+</style>
 </head>
 <body>
 
-  <div id="page-landing" class="page active">
-    <nav class="topnav">
-      <div class="logo-wrap">
-        <img src="https://i.imgur.com/k6p7vG1.png" class="logo-img" alt="Logo"/>
-        We Design.
-      </div>
-      <div style="display:flex; gap:32px; align-items:center">
-        <a href="https://calendly.com/app/scheduling/meeting_types/user/me" style="font-weight:600; font-size:14px">Book a Call</a>
-        <button class="btn-primary" onclick="scrollToLogin()">Client Portal</button>
-      </div>
-    </nav>
+<div id="page-landing" class="page active">
+  <nav style="display:flex;justify-content:space-between;padding:24px 40px;align-items:center;border-bottom:1px solid var(--border)">
+    <div style="font-weight:900;font-size:20px;display:flex;align-items:center;gap:10px">
+      <img src="https://i.imgur.com/k6p7vG1.png" style="height:28px"/> We Design.
+    </div>
+    <div style="display:flex;gap:32px;align-items:center;font-weight:600;font-size:14px">
+      <a href="#process-section">Process</a>
+      <a href="#pricing-section">Pricing</a>
+      <button onclick="document.getElementById('login-box').scrollIntoView({behavior:'smooth'})" style="background:#000;color:#fff;padding:10px 20px;border-radius:8px;border:none;cursor:pointer">Client Portal</button>
+    </div>
+  </nav>
 
-    <div class="hero">
-      <div class="hero-bg-grid"></div>
-      <div class="hero-bg-fade"></div>
-      
-      <div style="flex:1.2; z-index:10">
-        <h1 style="font-size:82px; font-weight:900; line-height:0.95; margin-bottom:24px; letter-spacing:-0.05em">
-          Design that<br>moves business<br><span class="grad-text">forward.</span>
-        </h1>
-        <p style="font-size:20px; color:#666; margin-bottom:48px; max-width:520px; line-height:1.6">
-          A structured design system for teams who value clarity, speed, and craft. Your central hub for every deliverable.
-        </p>
+  <header class="hero">
+    <div class="grid-bg"></div>
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center">
+      <div>
+        <h1 style="font-size:80px;line-height:0.9;font-weight:900;letter-spacing:-0.04em;margin-bottom:24px">Design that<br>moves business<br><span style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">forward.</span></h1>
+        <p style="font-size:18px;color:#666;margin-bottom:40px;max-width:440px">A structured design system for teams who value clarity, speed, and craft.</p>
         
-        <div id="login-trigger" style="max-width:440px; background:#fff; padding:32px; border-radius:24px; border:1px solid #eee; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1)">
-          <div style="font-weight:700; margin-bottom:16px; font-size:15px">Enter your email to enter your hub</div>
-          <div style="display:flex; gap:12px">
-            <input id="login-email" type="email" placeholder="name@company.com" style="flex:1; padding:16px; border:1px solid #ddd; border-radius:14px; outline:none; font-size:16px"/>
-            <button class="btn-primary" onclick="handleLogin()">Login</button>
+        <div id="login-box" style="background:#fff;padding:24px;border:1px solid #ddd;border-radius:16px;max-width:400px;box-shadow:0 20px 40px rgba(0,0,0,0.05)">
+          <p style="font-weight:700;margin-bottom:12px">Access Your Project Hub</p>
+          <div style="display:flex;gap:10px">
+            <input id="login-email" type="email" placeholder="Enter your email" style="flex:1;padding:12px;border:1px solid #ddd;border-radius:10px;outline:none"/>
+            <button onclick="handleLogin()" style="background:#000;color:#fff;padding:12px 24px;border:1px solid #000;border-radius:10px;cursor:pointer;font-weight:600">Enter</button>
           </div>
         </div>
       </div>
+      <div class="hero-cards" style="perspective:1000px">
+        <div id="heroStack" style="position:relative;width:400px;height:260px;transform-style:preserve-3d;transition:transform 0.1s ease">
+          <div style="position:absolute;inset:0;background:var(--grad);border-radius:24px;transform:rotate(-4deg) translateX(-20px)"></div>
+          <div style="position:absolute;inset:0;background:#000;border-radius:24px;display:flex;align-items:center;justify-content:center">
+             <img src="https://i.imgur.com/k6p7vG1.png" style="width:100px"/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <section id="pricing-section" style="padding:100px 40px;background:#fafafa">
+     <h2 style="text-align:center;font-size:48px;font-weight:900;margin-bottom:60px">Simple. Transparent.</h2>
+     <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:24px">
+        <div style="background:#fff;padding:40px;border-radius:20px;border:1px solid #eee">
+           <h3>Foundation</h3>
+           <p style="font-size:32px;font-weight:900;margin:20px 0">$750</p>
+           <a href="https://buy.stripe.com/9B6aEWgy25gR0i5179fMA0h" style="display:block;background:#000;color:#fff;text-align:center;padding:15px;border-radius:10px;font-weight:700">Get Started</a>
+        </div>
+        <div style="background:#fff;padding:40px;border-radius:20px;border:2px solid #000;position:relative">
+           <div style="position:absolute;top:-15px;right:20px;background:#000;color:#fff;padding:5px 15px;border-radius:20px;font-size:12px;font-weight:800">POPULAR</div>
+           <h3>Web Launch</h3>
+           <p style="font-size:32px;font-weight:900;margin:20px 0">$1,250</p>
+           <a href="https://buy.stripe.com/4gMeVc1D84cN8OBg23fMA0i" style="display:block;background:#000;color:#fff;text-align:center;padding:15px;border-radius:10px;font-weight:700">Get Started</a>
+        </div>
+        <div style="background:#fff;padding:40px;border-radius:20px;border:1px solid #eee">
+           <h3>App MVP</h3>
+           <p style="font-size:32px;font-weight:900;margin:20px 0">$2,500</p>
+           <a href="https://buy.stripe.com/3cI00ichMdNnc0N179fMA0j" style="display:block;background:#000;color:#fff;text-align:center;padding:15px;border-radius:10px;font-weight:700">Get Started</a>
+        </div>
+     </div>
+  </section>
+</div>
 
-      <div class="hero-right">
-        <div class="card-stack" id="heroCardStack">
-           <div class="creator-card" style="transform: rotate(-4deg) translateX(-30px); background: var(--grad); opacity: 0.9"></div>
-           <div class="creator-card" style="transform: rotate(2deg) translateX(10px)">
-              <img src="https://i.imgur.com/k6p7vG1.png" style="width:120px" alt="Logo"/>
+<div id="page-client" class="page">
+  <div class="dash-layout">
+    <aside class="dash-sidebar">
+      <img src="https://i.imgur.com/k6p7vG1.png" style="height:32px;margin-bottom:40px"/>
+      <div class="dash-lnk active" onclick="sv('client','overview',this)">Overview</div>
+      <div class="dash-lnk" onclick="sv('client','files',this)">Files</div>
+      <div class="dash-lnk" onclick="sv('client','messages',this)">Messages</div>
+      <div style="margin-top:auto">
+        <button onclick="logout()" style="width:100%;padding:12px;background:none;border:1px solid #ddd;border-radius:10px;cursor:pointer">Sign Out</button>
+      </div>
+    </aside>
+    
+    <main style="padding:40px;background:#fcfcfc;overflow-y:auto">
+      <div id="client-overview">
+        <h1 id="client-project-name" style="font-size:36px;font-weight:900;letter-spacing:-0.03em;margin-bottom:8px">Project Loading...</h1>
+        <div style="background:#fff;border:1px solid #eee;padding:24px;border-radius:16px;margin-top:30px">
+           <div style="display:flex;justify-content:space-between;font-weight:800;margin-bottom:12px">
+              <span>Project Progress</span>
+              <span id="progress-text" style="background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent">0%</span>
+           </div>
+           <div style="height:12px;background:#f0f0f0;border-radius:6px;overflow:hidden">
+              <div id="progress-fill" style="height:100%;background:#000;width:0%;transition:1.5s ease"></div>
            </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <div id="page-client" class="page">
-    <div class="dash-layout">
-      <aside class="sidebar">
-        <img src="https://i.imgur.com/k6p7vG1.png" style="height:40px; margin-bottom:48px" alt="Logo"/>
-        <nav style="display:flex; flex-direction:column; gap:8px">
-          <div style="padding:14px; background:var(--gray-100); border-radius:12px; font-weight:700">Project Overview</div>
-          <div style="padding:14px; color:#666; font-weight:500; cursor:pointer" onclick="window.open('https://calendly.com/app/scheduling/meeting_types/user/me')">Schedule Sync</div>
-          <div style="padding:14px; color:#666; font-weight:500; cursor:pointer" onclick="logout()">Sign Out</div>
-        </nav>
-      </aside>
-
-      <main class="main-content">
-        <header style="margin-bottom:48px">
-          <h2 id="client-project-name" style="font-size:36px; font-weight:900; letter-spacing:-0.03em">Project Loading...</h2>
-          <p style="color:#666; margin-top:4px">Welcome back to your central studio hub.</p>
-        </header>
-
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-            <span style="font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.05em">Overall Progress</span>
-            <span id="progress-text" style="font-weight:900; font-size:20px" class="grad-text">0%</span>
-          </div>
-          <div style="height:12px; background:#eee; border-radius:6px; overflow:hidden">
-            <div id="progress-fill" style="height:100%; background:var(--ink); width:0%; transition:1.2s cubic-bezier(0.2, 0.8, 0.2, 1)"></div>
-          </div>
-        </div>
-
-        <div style="display:grid; grid-template-columns: 1fr 420px; gap:32px">
-          <div class="card">
-            <h3 style="font-weight:800; margin-bottom:24px">Files & Deliverables</h3>
-            <div id="file-list"></div>
-          </div>
-
-          <div class="card" style="display:flex; flex-direction:column">
-            <h3 style="font-weight:800; margin-bottom:24px">Studio Messages</h3>
-            <div id="chat-history"></div>
-            <div style="display:flex; gap:12px">
-              <input id="msg-input" placeholder="Type a message..." style="flex:1; padding:14px; border:1px solid #ddd; border-radius:12px; outline:none"/>
-              <button class="btn-primary" onclick="sendMessage()">Send</button>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  </div>
-
-  <div id="page-designer" class="page">
-    <div class="main-content" style="max-width:1200px; margin:0 auto">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:64px">
-        <h1 style="font-weight:900; font-size:40px; letter-spacing:-0.04em">Command Center</h1>
-        <button class="btn-primary" onclick="logout()">Sign Out</button>
+      <div id="client-files" style="display:none">
+        <h2>All Deliverables</h2>
+        <div id="file-list" style="margin-top:20px"></div>
       </div>
-      <div id="admin-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(340px, 1fr)); gap:32px"></div>
-    </div>
+
+      <div id="client-messages" style="display:none">
+        <h2>Project Chat</h2>
+        <div id="chat-history"></div>
+        <div style="display:flex;gap:10px;margin-top:20px">
+           <input id="msg-input" placeholder="Type a message..." style="flex:1;padding:12px;border:1px solid #ddd;border-radius:10px;outline:none"/>
+           <button onclick="sendMessage()" style="background:#000;color:#fff;padding:12px 24px;border-radius:10px;border:none;cursor:pointer">Send</button>
+        </div>
+      </div>
+    </main>
   </div>
+</div>
 
-  <script>
-    const CONFIG = {
-      API: 'https://script.google.com/macros/s/AKfycbwxNOd_6jVolW0FfQoY0dDolPKJ_hNvwZXindFhowSLmfEYjIpAXjbPsOzeq_LpHs3z/exec',
-      DesignerEmail: 'hello@wedesignsstuddio.com'
-    };
+<div id="page-designer" class="page">
+  <div style="padding:40px;max-width:1200px;margin:0 auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:40px">
+      <h1 style="font-weight:900">Designer Command Center</h1>
+      <button onclick="logout()" style="background:#000;color:#fff;padding:10px 20px;border-radius:10px;border:none">Sign Out</button>
+    </div>
+    <div id="admin-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px"></div>
+  </div>
+</div>
 
-    let currentUser = null;
+<script>
+const CONFIG = {
+  API: 'https://script.google.com/macros/s/AKfycbwxNOd_6jVolW0FfQoY0dDolPKJ_hNvwZXindFhowSLmfEYjIpAXjbPsOzeq_LpHs3z/exec',
+  Designer: 'hello@wedesignsstuddio.com'
+};
 
-    // Check for saved login on startup
-    window.onload = () => {
-      const savedEmail = localStorage.getItem('hubEmail');
-      if (savedEmail) {
-        document.getElementById('login-email').value = savedEmail;
-        handleLogin();
-      }
-    };
+let currentUser = null;
 
-    function scrollToLogin() {
-      document.getElementById('login-trigger').scrollIntoView({behavior:'smooth'});
-    }
+// VIEW SWITCHER (YOUR ORIGINAL LOGIC)
+function sv(dash, view, link) {
+  const views = ['overview', 'files', 'messages'];
+  views.forEach(v => {
+    const el = document.getElementById(dash + '-' + v);
+    if(el) el.style.display = 'none';
+  });
+  const target = document.getElementById(dash + '-' + view);
+  if(target) target.style.display = 'block';
+  
+  if(link) {
+    const sidebar = link.closest('.dash-sidebar');
+    if(sidebar) sidebar.querySelectorAll('.dash-lnk').forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+  }
+}
 
-    async function handleLogin() {
-      const email = document.getElementById('login-email').value.trim().toLowerCase();
-      if (!email) return;
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  if(!email) return;
 
-      try {
-        const res = await fetch(`${CONFIG.API}?action=getDashboard&email=${email}`);
-        const data = await res.json();
+  try {
+    const res = await fetch(`${CONFIG.API}?action=getDashboard&email=${email}`);
+    const data = await res.json();
+    if(data.error) return alert(data.error);
 
-        if (data.error) {
-          alert(data.error);
-          return;
-        }
+    localStorage.setItem('hubEmail', email);
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
 
-        localStorage.setItem('hubEmail', email);
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-
-        if (data.role === 'designer') {
-          renderDesigner(data.projects);
-        } else {
-          renderClient(data);
-        }
-      } catch (e) {
-        alert("Connection Error. Make sure you deployed your Apps Script as 'Anyone'.");
-      }
-    }
-
-    function renderClient(data) {
-      currentUser = data.project;
-      document.getElementById('page-client').classList.add('active');
-      document.getElementById('client-project-name').innerText = currentUser.name;
-      document.getElementById('progress-text').innerText = (currentUser.progress || 0) + '%';
-      
-      // Animate progress bar
-      setTimeout(() => {
-        document.getElementById('progress-fill').style.width = (currentUser.progress || 0) + '%';
-      }, 100);
-
-      // Render Files
-      const fl = document.getElementById('file-list');
-      fl.innerHTML = (data.files || []).map(f => `
-        <div style="display:flex; justify-content:space-between; align-items:center; padding:18px; background:#f9fafb; border:1px solid #eee; border-radius:16px; margin-bottom:12px">
-          <div>
-            <div style="font-weight:700; font-size:15px">${f.filename}</div>
-            <div style="font-size:11px; color:#999; text-transform:uppercase; margin-top:2px; font-weight:700">${f.type || 'Deliverable'}</div>
-          </div>
-          <a href="${f.url}" target="_blank" style="color:var(--ink); font-weight:800; text-decoration:none; font-size:13px; padding:8px 16px; border:1px solid #ddd; border-radius:8px; background:#fff">View</a>
-        </div>
-      `).join('') || '<p style="color:#999">Your deliverables will appear here.</p>';
-
-      updateChatUI(data.messages);
-    }
-
-    function renderDesigner(projects) {
+    if(data.role === 'designer') {
       document.getElementById('page-designer').classList.add('active');
-      const grid = document.getElementById('admin-grid');
-      grid.innerHTML = projects.map(p => `
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px">
-             <h3 style="font-weight:800; font-size:20px">${p.name}</h3>
-             <span style="font-size:10px; font-weight:800; padding:4px 8px; background:#fef9c3; color:#854d0e; border-radius:6px">${p.status}</span>
-          </div>
-          <p style="color:#666; font-size:13px; margin-bottom:20px">${p.email}</p>
-          <div style="font-size:12px; font-weight:800; margin-bottom:6px">PROGRESS: ${p.progress}%</div>
-          <div style="height:6px; background:#eee; border-radius:3px; overflow:hidden; margin-bottom:20px">
-            <div style="width:${p.progress}%; height:100%; background:#000"></div>
-          </div>
-          <button class="btn-primary" style="width:100%" onclick="window.open('https://docs.google.com/spreadsheets/d/12mEL1l6YiVznkkUWwTEYFK5RPW-OgC9F31AITYSyfvE/edit')">Manage Project</button>
-        </div>
-      `).join('');
+      renderDesigner(data.projects);
+    } else {
+      document.getElementById('page-client').classList.add('active');
+      renderClient(data);
     }
+  } catch(e) { alert("Error connecting to studio."); }
+}
 
-    async function sendMessage() {
-      const input = document.getElementById('msg-input');
-      const text = input.value.trim();
-      if (!text || !currentUser) return;
+function renderClient(data) {
+  currentUser = data.project;
+  document.getElementById('client-project-name').innerText = currentUser.name;
+  document.getElementById('progress-text').innerText = currentUser.progress + '%';
+  setTimeout(() => document.getElementById('progress-fill').style.width = currentUser.progress + '%', 100);
 
-      const chat = document.getElementById('chat-history');
-      const div = document.createElement('div');
-      div.className = 'bubble client';
-      div.innerHTML = `<strong>You:</strong><br>${text}`;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-      input.value = '';
+  // Files
+  const fl = document.getElementById('file-list');
+  fl.innerHTML = data.files.map(f => `
+    <div style="display:flex;justify-content:space-between;padding:15px;background:#fff;border:1px solid #eee;border-radius:12px;margin-bottom:12px">
+      <span style="font-weight:700">${f.filename}</span>
+      <a href="${f.url}" target="_blank" style="color:blue;font-weight:800">Download</a>
+    </div>
+  `).join('') || '<p>No files yet.</p>';
 
-      await fetch(CONFIG.API, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({ action: 'sendMessage', projectId: currentUser.id, sender: 'Client', text: text })
-      });
-    }
+  // Messages
+  const chat = document.getElementById('chat-history');
+  chat.innerHTML = data.messages.map(m => `
+    <div class="bubble ${m.sender === 'Tk' ? 'studio' : 'client'}">
+      <strong>${m.sender}:</strong><br>${m.text}
+    </div>
+  `).join('');
+  chat.scrollTop = chat.scrollHeight;
+}
 
-    function updateChatUI(messages) {
-      const chat = document.getElementById('chat-history');
-      chat.innerHTML = (messages || []).map(m => `
-        <div class="bubble ${m.sender === 'Tk' || m.sender === 'Studio' ? 'studio' : 'client'}">
-          <strong>${m.sender}:</strong><br>${m.text}
-        </div>
-      `).join('');
-      chat.scrollTop = chat.scrollHeight;
-    }
+function renderDesigner(projects) {
+  const grid = document.getElementById('admin-grid');
+  grid.innerHTML = projects.map(p => `
+    <div style="background:#fff;padding:24px;border:1px solid #eee;border-radius:16px">
+      <h3>${p.name}</h3>
+      <p style="font-size:12px;color:#666">${p.email}</p>
+      <div style="margin-top:15px;font-weight:800">Progress: ${p.progress}%</div>
+      <button style="width:100%;margin-top:20px;padding:10px;background:#000;color:#fff;border-radius:8px;border:none" onclick="window.open('https://docs.google.com/spreadsheets/d/12mEL1l6YiVznkkUWwTEYFK5RPW-OgC9F31AITYSyfvE/edit')">Manage</button>
+    </div>
+  `).join('');
+}
 
-    function logout() {
-      localStorage.removeItem('hubEmail');
-      location.reload();
-    }
+async function sendMessage() {
+  const input = document.getElementById('msg-input');
+  if(!input.value.trim()) return;
+  
+  const payload = { action:'sendMessage', projectId: currentUser.id, sender:'Client', text: input.value };
+  
+  // Optimistic UI
+  const chat = document.getElementById('chat-history');
+  chat.innerHTML += `<div class="bubble client"><strong>You:</strong><br>${input.value}</div>`;
+  input.value = '';
+  chat.scrollTop = chat.scrollHeight;
 
-    // ── 3D MOUSE EFFECT ──
-    const heroStack = document.getElementById('heroCardStack');
-    if (heroStack) {
-      document.addEventListener('mousemove', (e) => {
-        const x = (window.innerWidth / 2 - e.pageX) / 35;
-        const y = (window.innerHeight / 2 - e.pageY) / 35;
-        heroStack.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-      });
-    }
-  </script>
+  fetch(CONFIG.API, { method:'POST', mode:'no-cors', body:JSON.stringify(payload) });
+}
+
+function logout() { localStorage.removeItem('hubEmail'); location.reload(); }
+
+// ── PERSIST LOGIN ──
+window.onload = () => {
+  const saved = localStorage.getItem('hubEmail');
+  if(saved) {
+    document.getElementById('login-email').value = saved;
+    handleLogin();
+  }
+};
+
+// ── YOUR 3D EFFECT ──
+const heroStack = document.getElementById('heroStack');
+document.addEventListener('mousemove', e => {
+  const x = (window.innerWidth / 2 - e.pageX) / 30;
+  const y = (window.innerHeight / 2 - e.pageY) / 30;
+  heroStack.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+});
+</script>
 </body>
 </html>

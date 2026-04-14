@@ -1173,7 +1173,8 @@ const IMGS = {
               <div class="msg-item"><div class="msg-head"><strong>Tk</strong> · 2h ago</div><div class="msg-body">Homepage layout updated. Mobile nav hamburger live — please review.</div></div>
               <div class="msg-item"><div class="msg-head"><strong>You</strong> · 5h ago</div><div class="msg-body">Can we try a lighter background on the work page?</div></div>
               <div class="msg-item"><div class="msg-head"><strong>Tk</strong> · 1d ago</div><div class="msg-body">Initial concepts ready for review. Files in deliverables above.</div></div>
-              <div class="msg-input-wrap"><input class="msg-input" id="message-input" placeholder="Send a message..."/><button class="msg-send" id="message-send-btn" onclick="sendMessage()">Send</button></div>
+              <div class="msg-input-wrap"><div id="chat-history"></div>
+<input class="msg-input" id="message-input" placeholder="Send a message..."/><button class="msg-send" id="message-send-btn" onclick="sendMessage()">Send</button></div>
             </div>
             <div class="dash-card">
               <div class="dash-card-header"><div class="dash-card-title">Timeline</div></div>
@@ -1585,6 +1586,27 @@ async function sendMessage() {
 }
 
 
+
+
+function displayMessages(messages) {
+    const chatContainer = document.getElementById('chat-history');
+    if (!chatContainer) return;
+    chatContainer.innerHTML = '';
+
+    messages.forEach(msg => {
+        const messageDiv = document.createElement('div');
+        const isDesigner = msg.sender === 'Tk' || msg.sender === 'Designer';
+
+        messageDiv.className = isDesigner ? 'msg-designer' : 'msg-client';
+        messageDiv.innerHTML = `
+            <p><strong>${msg.sender}:</strong> ${msg.text}</p>
+            <small>${new Date(msg.timestamp).toLocaleTimeString()}</small>
+        `;
+
+        chatContainer.appendChild(messageDiv);
+    });
+}
+
 async function sendHubMessage() {
   const messageInputEl = document.getElementById('message-input');
   const messageText = messageInputEl ? messageInputEl.value.trim() : '';
@@ -1609,8 +1631,16 @@ async function sendHubMessage() {
       body: JSON.stringify(payload)
     });
 
+    const chatContainer = document.getElementById('chat-history');
+    if (chatContainer) {
+      const tempMsg = document.createElement('div');
+      tempMsg.className = 'msg-client';
+      tempMsg.innerHTML = `<p><strong>You:</strong> ${messageText}</p><small>Just now</small>`;
+      chatContainer.appendChild(tempMsg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
     if (messageInputEl) messageInputEl.value = '';
-    alert('Message sent to the studio!');
   } catch (error) {
     console.error('Error sending message:', error);
   }

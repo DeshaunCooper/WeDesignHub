@@ -1,102 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>We Design. | Central Hub</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <style>
-    :root { --ink: #111; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --accent: #7c3aed; --grad: linear-gradient(135deg,#e040fb,#7c3aed,#06b6d4); }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; color: var(--ink); background: #fafafa; line-height: 1.5; }
-    .page { display: none; min-height: 100vh; }
-    .page.active { display: block; }
-    
-    /* UI Components */
-    .btn-primary { background: var(--ink); color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .badge { padding: 4px 12px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-    .badge-inprogress { background: #fef9c3; color: #854d0e; }
-    
-    /* Layouts */
-    .dash-container { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
-    .sidebar { border-right: 1px solid var(--gray-200); background: #fff; padding: 24px; display: flex; flex-direction: column; }
-    .main-content { padding: 40px; }
-    .card { background: #fff; border: 1px solid var(--gray-200); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-    
-    /* Messaging */
-    #chat-history { height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; margin-bottom: 20px; }
-    .msg-bubble { max-width: 80%; padding: 12px 16px; border-radius: 14px; font-size: 14px; }
-    .msg-studio { align-self: flex-start; background: var(--gray-100); color: var(--ink); }
-    .msg-client { align-self: flex-end; background: var(--ink); color: #fff; }
+    :root { 
+      --ink: #111; --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; 
+      --accent: #06b6d4; --grad: linear-gradient(135deg,#e040fb,#7c3aed,#06b6d4,#84cc16);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#fafafa;color:var(--ink);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    .page{display:none;animation:fadeIn 0.3s ease}
+    .page.active{display:block}
+    @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none}}
 
-    /* Hero Parallax */
-    .hero-right { perspective: 1000px; display: flex; justify-content: center; align-items: center; }
-    .card-stack { position: relative; width: 300px; height: 200px; transform-style: preserve-3d; transition: transform 0.1s ease; }
-    .creator-card { position: absolute; width: 100%; height: 100%; border-radius: 12px; background: var(--grad); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+    /* NAV */
+    .topnav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:70px;background:rgba(255,255,255,0.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--gray-200)}
+    .logo-wrap{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-0.02em}
+    .logo-img{height:32px;width:32px;object-fit:contain}
+
+    /* DASHBOARD LAYOUT */
+    .dash-layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .sidebar{background:#fff;border-right:1px solid var(--gray-200);padding:30px 20px;display:flex;flex-direction:column;gap:8px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;color:#6b7280;text-decoration:none;font-size:14px;font-weight:500;transition:0.2s;cursor:pointer}
+    .nav-item:hover, .nav-item.active{background:var(--gray-100);color:var(--ink)}
+    .main-content{padding:40px;background:var(--gray-50);overflow-y:auto}
+
+    /* CARDS */
+    .card{background:#fff;border:1px solid var(--gray-200);border-radius:16px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,0.05);margin-bottom:24px}
+    .badge{padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase}
+    .badge-progress{background:#fef9c3;color:#854d0e}
+    .btn-primary{background:var(--ink);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-weight:600;cursor:pointer;transition:0.2s}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,0.1)}
+
+    /* CHAT */
+    #chat-history{height:350px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:20px;padding-right:10px}
+    .bubble{max-width:85%;padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.5}
+    .bubble.studio{align-self:flex-start;background:var(--gray-100);color:var(--ink);border-bottom-left-radius:2px}
+    .bubble.client{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:2px}
+    
+    /* UTILS */
+    .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .prog-track{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin:15px 0}
+    .prog-fill{height:100%;background:var(--ink);transition:1s cubic-bezier(0.4, 0, 0.2, 1)}
   </style>
 </head>
 <body>
 
   <div id="page-landing" class="page active">
-    <nav style="display:flex; justify-content:space-between; padding:20px 40px; align-items:center">
-      <div style="font-weight:800; font-size:20px">WE DESIGN.</div>
-      <div id="auth-controls">
-         <button class="btn-primary" onclick="toggleLoginModal()">Client Login</button>
+    <nav class="topnav">
+      <div class="logo-wrap">
+        <img class="logo-img" src="https://i.imgur.com/k6p7vG1.png" alt="Logo"/>
+        We Design.
+      </div>
+      <div style="display:flex;gap:20px;align-items:center">
+        <a href="#pricing" style="text-decoration:none;color:#666;font-size:14px">Pricing</a>
+        <button class="btn-primary" onclick="document.getElementById('login-section').scrollIntoView({behavior:'smooth'})">Client Portal</button>
       </div>
     </nav>
-    
-    <div style="display:grid; grid-template-columns: 1fr 1fr; padding:100px 40px; align-items:center">
+
+    <div style="max-width:1200px;margin:0 auto;padding:100px 40px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:60px">
       <div>
-        <h1 style="font-size:64px; font-weight:800; margin-bottom:20px">Design for the <span style="background:var(--grad); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">Modern Era.</span></h1>
-        <p style="font-size:18px; color:#666; margin-bottom:30px; max-width:450px">Your dedicated design hub. No emails, no clutter. Just progress.</p>
-        <div style="display:flex; gap:12px">
-          <input id="login-email" type="email" placeholder="Enter email" style="padding:12px; border:1px solid #ddd; border-radius:10px; width:250px">
-          <button class="btn-primary" onclick="handleLogin()">Enter Hub</button>
+        <h1 style="font-size:68px;font-weight:800;line-height:1.1;margin-bottom:24px;letter-spacing:-0.03em">
+          Design at the speed of <span class="grad-text">modern business.</span>
+        </h1>
+        <p style="font-size:18px;color:#666;margin-bottom:40px;line-height:1.6">Your central design hub. Track progress, manage files, and chat with your team — all in one place.</p>
+        
+        <div id="login-section" style="background:#fff;padding:30px;border-radius:20px;border:1px solid #eee;box-shadow:0 20px 40px rgba(0,0,0,0.05)">
+          <div style="font-weight:700;margin-bottom:15px">Access Your Hub</div>
+          <div style="display:flex;gap:10px">
+            <input id="login-email" type="email" placeholder="Enter your email" style="flex:1;padding:14px;border:1px solid #ddd;border-radius:12px;outline:none"/>
+            <button class="btn-primary" onclick="handleLogin()">Login</button>
+          </div>
+          <div style="font-size:12px;color:#999;margin-top:12px">Try <strong>test@gmail.com</strong> for a demo.</div>
         </div>
       </div>
-      <div class="hero-right">
-        <div class="card-stack" id="heroCard">
-          <div class="creator-card"></div>
-        </div>
+      <div style="display:flex;justify-content:center">
+        <img src="https://i.imgur.com/k6p7vG1.png" style="width:80%;max-width:400px;filter:drop-shadow(0 20px 50px rgba(0,0,0,0.1))" alt="WD Hero"/>
       </div>
     </div>
   </div>
 
   <div id="page-client" class="page">
-    <div class="dash-container">
+    <div class="dash-layout">
       <aside class="sidebar">
-        <div style="font-weight:800; margin-bottom:40px">WE DESIGN.</div>
-        <nav style="display:flex; flex-direction:column; gap:10px; flex:1">
-          <a href="#" style="text-decoration:none; color:var(--ink); font-weight:600">Overview</a>
-          <a href="#" style="text-decoration:none; color:#666">Deliverables</a>
-          <a href="#" style="text-decoration:none; color:#666">Messages</a>
-        </nav>
-        <button onclick="logout()" style="border:none; background:none; color:red; cursor:pointer; text-align:left">Logout</button>
-      </aside>
-      <main class="main-content">
-        <h2 id="client-project-name" style="font-size:28px; margin-bottom:8px">Project Loading...</h2>
-        <div class="card">
-          <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-            <span>Project Progress</span>
-            <span id="progress-text">0%</span>
-          </div>
-          <div style="height:8px; background:#eee; border-radius:4px; overflow:hidden">
-            <div id="progress-bar" style="width:0%; height:100%; background:var(--ink); transition:1s ease"></div>
-          </div>
+        <div class="logo-wrap" style="margin-bottom:40px">
+          <img class="logo-img" src="https://i.imgur.com/k6p7vG1.png" alt="Logo"/>
+          We Design.
         </div>
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
-          <div class="card">
-            <h3>Files</h3>
-            <div id="file-list" style="margin-top:15px"></div>
+        <div class="nav-item active">Project Overview</div>
+        <div class="nav-item">Deliverables</div>
+        <div class="nav-item">Billing</div>
+        <div style="margin-top:auto">
+          <button onclick="logout()" style="width:100%;padding:10px;border:1px solid #eee;background:none;border-radius:10px;cursor:pointer;font-size:13px">Sign Out</button>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header style="margin-bottom:40px">
+          <h2 id="client-project-name" style="font-size:32px;font-weight:800;letter-spacing:-0.02em">Project Loading...</h2>
+          <p id="client-project-meta" style="color:#666;margin-top:5px">Welcome back to your workspace.</p>
+        </header>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-weight:600">Current Progress</div>
+            <div id="progress-text" style="font-weight:800;color:var(--accent)">0%</div>
           </div>
-          <div class="card">
-            <h3>Messages</h3>
-            <div id="chat-history"></div>
-            <div style="display:flex; gap:10px">
-              <input id="msg-input" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px">
-              <button class="btn-primary" onclick="sendMessage()">Send</button>
+          <div class="prog-track">
+            <div id="progress-fill" class="prog-fill" style="width:0%"></div>
+          </div>
+          <div id="client-milestone" style="font-size:13px;color:#666">Next: Design Review</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 400px;gap:24px">
+          <div>
+            <div class="card">
+              <h3 style="margin-bottom:20px">Files & Assets</h3>
+              <div id="file-list"></div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="display:flex;flex-direction:column">
+              <h3 style="margin-bottom:20px">Studio Messages</h3>
+              <div id="chat-history"></div>
+              <div style="display:flex;gap:10px">
+                <input id="msg-input" placeholder="Type a message..." style="flex:1;padding:12px;border:1px solid #eee;border-radius:10px;outline:none"/>
+                <button class="btn-primary" onclick="sendMessage()" style="padding:12px">Send</button>
+              </div>
             </div>
           </div>
         </div>
@@ -105,12 +138,16 @@
   </div>
 
   <div id="page-designer" class="page">
-    <div class="main-content" style="max-width:1000px; margin:0 auto">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px">
-        <h1>Designer Command Center</h1>
-        <button onclick="logout()">Logout</button>
+    <div class="main-content" style="max-width:1100px;margin:0 auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:40px">
+        <div class="logo-wrap">
+          <img class="logo-img" src="https://i.imgur.com/k6p7vG1.png" alt="Logo"/>
+          Designer Command Center
+        </div>
+        <button class="btn-primary" onclick="logout()">Logout</button>
       </div>
-      <div id="admin-project-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:20px">
+      
+      <div id="admin-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:24px">
         </div>
     </div>
   </div>
@@ -118,79 +155,83 @@
   <script>
     const CONFIG = {
       API: 'https://script.google.com/macros/s/AKfycbwwuqrIlOwo3ahMPgxHcjqsezOr8ZpTRYF1xGhkZhN-z8vfys-ITQQc_nEQovbIfMV_/exec',
-      DesignerEmail: 'hello@wedesignsstuddio.com'
+      Designer: 'hello@wedesignsstuddio.com'
     };
 
     let currentUser = null;
 
-    // --- Core Logic ---
+    // Persist Login
+    window.onload = () => {
+      const savedEmail = localStorage.getItem('hubEmail');
+      if (savedEmail) {
+        document.getElementById('login-email').value = savedEmail;
+        handleLogin();
+      }
+    };
+
     async function handleLogin() {
       const email = document.getElementById('login-email').value.trim().toLowerCase();
-      if(!email) return;
+      if (!email) return;
 
       try {
         const res = await fetch(`${CONFIG.API}?action=getDashboard&email=${email}`);
         const data = await res.json();
 
-        if(data.error) {
-          alert("No project found for this email.");
+        if (data.error) {
+          alert(data.error);
           return;
         }
 
-        localStorage.setItem('userEmail', email);
-        renderView(data);
+        localStorage.setItem('hubEmail', email);
+        document.getElementById('page-landing').classList.remove('active');
+        
+        if (data.role === 'designer') {
+          renderDesigner(data.projects);
+        } else {
+          renderClient(data);
+        }
       } catch (e) {
-        console.error("Login Error", e);
-      }
-    }
-
-    function renderView(data) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      
-      if(data.role === 'designer') {
-        document.getElementById('page-designer').classList.add('active');
-        renderDesigner(data.projects);
-      } else {
-        document.getElementById('page-client').classList.add('active');
-        renderClient(data);
+        alert("Connection Error. Please check your Apps Script deployment.");
       }
     }
 
     function renderClient(data) {
       currentUser = data.project;
-      document.getElementById('client-project-name').innerText = data.project.name;
-      document.getElementById('progress-bar').style.width = data.project.progress + '%';
-      document.getElementById('progress-text').innerText = data.project.progress + '%';
+      document.getElementById('page-client').classList.add('active');
+      document.getElementById('client-project-name').innerText = currentUser.name;
+      document.getElementById('progress-text').innerText = (currentUser.progress || 0) + '%';
+      document.getElementById('progress-fill').style.width = (currentUser.progress || 0) + '%';
+      document.getElementById('client-milestone').innerText = "Milestone: " + (currentUser.milestone || 'In Progress');
 
       // Files
       const fileList = document.getElementById('file-list');
-      fileList.innerHTML = data.files.map(f => `
-        <div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee">
-          <span>${f.filename}</span>
-          <a href="${f.url}" target="_blank" style="color:var(--accent); font-weight:600">Download</a>
+      fileList.innerHTML = (data.files || []).map(f => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:15px;background:#f9fafb;border-radius:12px;margin-bottom:10px">
+          <div>
+            <div style="font-size:14px;font-weight:600">${f.filename}</div>
+            <div style="font-size:11px;color:#999">${f.type || 'FILE'}</div>
+          </div>
+          <a href="${f.url}" target="_blank" style="color:var(--accent);font-weight:600;font-size:13px;text-decoration:none">Download</a>
         </div>
-      `).join('');
+      `).join('') || '<p style="color:#999;font-size:13px">No files uploaded yet.</p>';
 
       // Messages
-      const chat = document.getElementById('chat-history');
-      chat.innerHTML = data.messages.map(m => `
-        <div class="msg-bubble ${m.sender === 'Tk' ? 'msg-studio' : 'msg-client'}">
-          <strong>${m.sender}:</strong> ${m.text}
-        </div>
-      `).join('');
-      chat.scrollTop = chat.scrollHeight;
+      updateChatUI(data.messages);
     }
 
     function renderDesigner(projects) {
-      const grid = document.getElementById('admin-project-grid');
+      document.getElementById('page-designer').classList.add('active');
+      const grid = document.getElementById('admin-grid');
       grid.innerHTML = projects.map(p => `
         <div class="card">
-          <h3>${p.name}</h3>
-          <p style="color:#666; font-size:14px">${p.email}</p>
-          <div style="margin:15px 0">
-            <span class="badge badge-inprogress">${p.status}</span>
+          <div class="badge badge-progress" style="margin-bottom:10px">${p.status}</div>
+          <h3 style="font-size:18px;margin-bottom:5px">${p.name}</h3>
+          <p style="font-size:13px;color:#666;margin-bottom:20px">${p.email}</p>
+          <div style="font-size:12px;font-weight:600;margin-bottom:5px">Progress: ${p.progress}%</div>
+          <div style="height:6px;background:#eee;border-radius:3px;overflow:hidden;margin-bottom:20px">
+            <div style="width:${p.progress}%;height:100%;background:var(--ink)"></div>
           </div>
-          <button class="btn-primary" style="width:100%" onclick="window.open('https://docs.google.com/spreadsheets/d/12mEL1l6YiVznkkUWwTEYFK5RPW-OgC9F31AITYSyfvE/edit')">Edit in Sheets</button>
+          <button class="btn-primary" style="width:100%" onclick="window.open('https://docs.google.com/spreadsheets/d/12mEL1l6YiVznkkUWwTEYFK5RPW-OgC9F31AITYSyfvE/edit')">Manage in Sheets</button>
         </div>
       `).join('');
     }
@@ -198,7 +239,7 @@
     async function sendMessage() {
       const input = document.getElementById('msg-input');
       const text = input.value.trim();
-      if(!text || !currentUser) return;
+      if (!text || !currentUser) return;
 
       const payload = {
         action: 'sendMessage',
@@ -207,39 +248,36 @@
         text: text
       };
 
-      // Optimistic UI update
-      const chat = document.getElementById('chat-history');
-      chat.innerHTML += `<div class="msg-bubble msg-client"><strong>You:</strong> ${text}</div>`;
+      // Optimistic Update
+      const history = document.getElementById('chat-history');
+      const div = document.createElement('div');
+      div.className = 'bubble client';
+      div.innerHTML = `<strong>You:</strong><br>${text}`;
+      history.appendChild(div);
+      history.scrollTop = history.scrollHeight;
       input.value = '';
 
       await fetch(CONFIG.API, {
         method: 'POST',
-        mode: 'no-cors', // Apps Script requirement
+        mode: 'no-cors',
         body: JSON.stringify(payload)
       });
     }
 
-    function logout() {
-      localStorage.removeItem('userEmail');
-      location.reload();
+    function updateChatUI(messages) {
+      const chat = document.getElementById('chat-history');
+      chat.innerHTML = (messages || []).map(m => `
+        <div class="bubble ${m.sender === 'Tk' || m.sender === 'Studio' ? 'studio' : 'client'}">
+          <strong>${m.sender}:</strong><br>${m.text}
+        </div>
+      `).join('');
+      chat.scrollTop = chat.scrollHeight;
     }
 
-    // --- Init ---
-    window.onload = () => {
-      const savedEmail = localStorage.getItem('userEmail');
-      if(savedEmail) {
-        document.getElementById('login-email').value = savedEmail;
-        handleLogin();
-      }
-    };
-
-    // Hero Animation
-    const heroCard = document.getElementById('heroCard');
-    document.addEventListener('mousemove', (e) => {
-      const x = (window.innerWidth / 2 - e.pageX) / 25;
-      const y = (window.innerHeight / 2 - e.pageY) / 25;
-      heroCard.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
-    });
+    function logout() {
+      localStorage.removeItem('hubEmail');
+      location.reload();
+    }
   </script>
 </body>
 </html>

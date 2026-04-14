@@ -1584,15 +1584,48 @@ async function sendMessage() {
   }
 }
 
+
+async function sendHubMessage() {
+  const messageInputEl = document.getElementById('message-input');
+  const messageText = messageInputEl ? messageInputEl.value.trim() : '';
+  const projectId = String(window.CURRENT_PROJECT_ID || '101');
+  const senderName = String(window.CURRENT_SENDER_NAME || 'Client');
+
+  if (!messageText) return;
+
+  const payload = {
+    action: 'sendMessage',
+    sender: senderName,
+    text: messageText,
+    projectId: projectId
+  };
+
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (messageInputEl) messageInputEl.value = '';
+    alert('Message sent to the studio!');
+  } catch (error) {
+    console.error('Error sending message:', error);
+  }
+}
+
 window.loadDashboard = loadDashboard;
 window.handleLogin = handleLogin;
 window.sendMessage = sendMessage;
+window.sendHubMessage = sendHubMessage;
 
 document.addEventListener('DOMContentLoaded', () => {
   const sendBtn = document.getElementById('message-send-btn');
   if (sendBtn && !sendBtn.dataset.bound) {
     sendBtn.dataset.bound = 'true';
-    sendBtn.addEventListener('click', sendMessage);
+    sendBtn.addEventListener('click', sendHubMessage);
   }
 
   const loginBtn = getEl('login-btn', 'email-login-btn');
